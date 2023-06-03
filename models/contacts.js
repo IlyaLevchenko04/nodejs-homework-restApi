@@ -1,6 +1,7 @@
 const fs = require('fs/promises');
 const path = require('path');
 const { nanoid } = require('nanoid');
+require('dotenv').config();
 
 const contactsPath = path.join(__dirname, '/contacts.json');
 const updateFile = async data => {
