@@ -1,69 +1,75 @@
 const fs = require('fs/promises');
 const path = require('path');
-const { nanoid } = require('nanoid');
+const mongoose = require('mongoose');
 
 const contactsPath = path.join(__dirname, '/contacts.json');
-const updateFile = async data => {
-  await fs.writeFile(contactsPath, JSON.stringify(data, null, 2));
-};
+
+const Schema = mongoose.Schema;
+
+const contactsSchema = new Schema({
+  name: {
+    type: String,
+    required: [true, 'Set name for contact'],
+  },
+  email: {
+    type: String,
+  },
+  phone: {
+    type: String,
+  },
+  favorite: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+const Contact = mongoose.model('Contact', contactsSchema);
 
 async function listContacts() {
-  const data = await fs.readFile(contactsPath, 'utf-8');
+  const data = await Contact.find();
 
-  return JSON.parse(data);
+  return data;
 }
 
 async function getContactById(contactId) {
-  const contacts = await fs.readFile(contactsPath, 'utf-8');
-  const data = JSON.parse(contacts);
-  const result = data.find(contact => contactId === contact.id);
+  const contacts = await Contact.findById(`${contactId}`);
 
-  return result || null;
+  return contacts || null;
 }
 
 async function removeContact(contactId) {
-  const contacts = await fs.readFile(contactsPath, 'utf-8');
-  const data = JSON.parse(contacts);
-  const index = data.findIndex(contact => contact.id === contactId);
-  if (index === -1) {
-    return null;
-  }
-  const [result] = await data.splice(index, 1);
-  updateFile(data);
-
-  return result;
+  const contact = await Contact.findByIdAndDelete(`${contactId}`);
+  return contact;
 }
 
 async function addContact(name, email, phone) {
-  const contacts = await fs.readFile(contactsPath, 'utf-8');
-  const data = JSON.parse(contacts);
-  const newContact = {
-    name,
-    email,
-    phone,
-    id: nanoid(),
-  };
-  data.push(newContact);
-  updateFile(data);
+  const contacts = await Contact.create({ name, email, phone });
 
-  return newContact;
+  return contacts;
 }
 
 async function updateContact(contactId, body) {
-  const contacts = await fs.readFile(contactsPath, 'utf-8');
-  const data = JSON.parse(contacts);
+  const contacts = await Contact.findByIdAndUpdate(
+    `${contactId}`,
+    { ...body },
+    { new: true }
+  );
 
-  const index = data.findIndex(({ id }) => id === contactId);
+  return contacts;
+}
 
-  if (index === -1) {
-    return null;
+async function updateStatusContact(contactId, body) {
+  if (Object.keys(body).includes('favorite')) {
+    const data = await Contact.findByIdAndUpdate(
+      `${contactId}`,
+      { favorite: body.favorite },
+      { new: true }
+    );
+
+    return data;
   }
 
-  data[index] = { ...body, id: contactId };
-
-  updateFile(data);
-
-  return data[index];
+  return 'missing field favorite';
 }
 
 module.exports = {
@@ -72,4 +78,5 @@ module.exports = {
   removeContact,
   addContact,
   updateContact,
+  updateStatusContact,
 };

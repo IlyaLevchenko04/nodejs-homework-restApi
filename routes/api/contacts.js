@@ -8,6 +8,7 @@ const contactsAddSchema = Joi.object({
   name: Joi.string().required(),
   email: Joi.string().required(),
   phone: Joi.string().required(),
+  favorite: Joi.boolean().required(),
 });
 
 router.get('/', async (req, res, next) => {
@@ -71,7 +72,13 @@ router.delete('/:contactId', async (req, res, next) => {
       throw error;
     }
 
-    res.json({ message: 'contact deleted' });
+    if (result === 'Not found') {
+      const error = new Error('Not found');
+      error.status = 404;
+      throw error;
+    }
+
+    res.json({ message: 'Contact deleted' });
   } catch (error) {
     next(error);
   }
@@ -96,6 +103,29 @@ router.put('/:contactId', async (req, res, next) => {
       const error = new Error('Not found');
       error.status = 404;
       throw error;
+    }
+
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.patch('/:contactId/favorite', async (req, res, next) => {
+  try {
+    const result = await contactsFunc.updateStatusContact(
+      req.params.contactId,
+      req.body
+    );
+
+    if (!result) {
+      const error = new Error('Not found');
+      error.status = 404;
+      throw error;
+    }
+
+    if (result === 'missing field favorite') {
+      return res.status(400).json({ message: 'missing field favorite' });
     }
 
     res.json(result);
