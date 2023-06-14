@@ -12,4 +12,3 @@ mongoose
     console.log(err.message);
     process.exit(1);
   });
-console.log(process.env.DB_HOST);
