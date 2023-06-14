@@ -2,8 +2,6 @@ const fs = require('fs/promises');
 const path = require('path');
 const mongoose = require('mongoose');
 
-const contactsPath = path.join(__dirname, '/contacts.json');
-
 const Schema = mongoose.Schema;
 
 const contactsSchema = new Schema({
@@ -42,8 +40,8 @@ async function removeContact(contactId) {
   return contact;
 }
 
-async function addContact(name, email, phone) {
-  const contacts = await Contact.create({ name, email, phone });
+async function addContact(name, email, phone, favorite) {
+  const contacts = await Contact.create({ name, email, phone, favorite });
 
   return contacts;
 }
