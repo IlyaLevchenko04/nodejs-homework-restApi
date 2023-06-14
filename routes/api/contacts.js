@@ -10,19 +10,16 @@ const {
 
 const router = express.Router();
 
-router.get('/', getAllContacts(req, res, next));
+router.get('/', getAllContacts);
 
-router.get('/:id', getOneContactById(req, res, next));
+router.get('/:id', getOneContactById);
 
-router.post('/', postContact(req, res, next));
+router.post('/', postContact);
 
-router.delete('/:contactId', deleteContact(req, res, next));
+router.delete('/:contactId', deleteContact);
 
-router.put('/:contactId', putContactById(req, res, next));
+router.put('/:contactId', putContactById);
 
-router.patch(
-  '/:contactId/favorite',
-  updateStatusFavoriteContact(req, res, next)
-);
+router.patch('/:contactId/favorite', updateStatusFavoriteContact);
 
 module.exports = router;
