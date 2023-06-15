@@ -1,5 +1,3 @@
-const fs = require('fs/promises');
-const path = require('path');
 const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
@@ -19,12 +17,16 @@ const contactsSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  owner: {
+    type: Schema.Types.ObjectId,
+    ref: 'user',
+  },
 });
 
 const Contact = mongoose.model('Contact', contactsSchema);
 
-async function listContacts() {
-  const data = await Contact.find();
+async function listContacts(owner) {
+  const data = await Contact.find({ owner });
 
   return data;
 }
@@ -40,8 +42,14 @@ async function removeContact(contactId) {
   return contact;
 }
 
-async function addContact(name, email, phone, favorite) {
-  const contacts = await Contact.create({ name, email, phone, favorite });
+async function addContact(name, email, phone, favorite, owner) {
+  const contacts = await Contact.create({
+    name,
+    email,
+    phone,
+    favorite,
+    owner,
+  });
 
   return contacts;
 }
