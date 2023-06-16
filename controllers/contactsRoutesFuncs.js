@@ -3,7 +3,8 @@ const contactsFunc = require('../models/contacts');
 
 async function getAllContacts(req, res, next) {
   try {
-    const result = await contactsFunc.listContacts();
+    const { _id: owner } = req.user;
+    const result = await contactsFunc.listContacts(owner);
 
     res.json(result);
   } catch (error) {
@@ -29,6 +30,8 @@ async function getOneContactById(req, res, next) {
 
 async function postContact(req, res, next) {
   try {
+    const { _id: id } = req.user;
+    console.log(id);
     const { error } = contactsAddSchema.validate(req.body);
 
     if (error) {
@@ -37,8 +40,14 @@ async function postContact(req, res, next) {
       throw error;
     }
 
-    const { name, email, phone } = req.body;
-    const result = await contactsFunc.addContact(name, email, phone);
+    const { name, email, phone, favorite } = req.body;
+    const result = await contactsFunc.addContact(
+      name,
+      email,
+      phone,
+      favorite,
+      id
+    );
 
     if (!result) {
       const error = new Error('Not found');

@@ -7,8 +7,11 @@ const {
   putContactById,
   updateStatusFavoriteContact,
 } = require('../../controllers/contactsRoutesFuncs');
+const { auth } = require('../../middlewares/auth');
 
 const router = express.Router();
+
+router.use(auth);
 
 router.get('/', getAllContacts);
 
