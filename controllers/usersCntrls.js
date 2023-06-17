@@ -1,7 +1,12 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const gravatar = require('gravatar');
+const fs = require('fs/promises');
+const path = require('path');
 const { SECRET_KEY } = process.env;
 const { User } = require('../schemas/User');
+const Jimp = require('jimp');
+const avatarsPath = path.resolve('public', 'avatars');
 
 async function registerUser(req, res, next) {
   const { email, password } = req.body;
@@ -15,9 +20,12 @@ async function registerUser(req, res, next) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    const avatarURL = gravatar.url(email);
+
     const newUser = {
       email,
       password: hashedPassword,
+      avatarURL,
     };
 
     await User.create(newUser);
@@ -86,9 +94,28 @@ async function logoutUser(req, res, next) {
   res.json({ message: 'Logout success' });
 }
 
+async function uploadAvatar(req, res, next) {
+  const { _id: id } = req.user;
+  const oldPath = req.file.path;
+  const filename = req.file.filename;
+  const newPath = path.join(avatarsPath, filename);
+  const avatarURL = path.join('avatars', filename);
+
+  const image = await Jimp.read(oldPath);
+
+  await image.resize(250, 250);
+
+  await image.write(newPath);
+  await fs.unlink(oldPath);
+  const user = await User.findByIdAndUpdate(id, { avatarURL: avatarURL });
+
+  res.json(user);
+}
+
 module.exports = {
   registerUser,
   loginUser,
   logoutUser,
   currentUser,
+  uploadAvatar,
 };
