@@ -6,11 +6,12 @@ async function auth(req, res, next) {
   const { authorization = '' } = req.headers;
   const [bearer, token] = authorization.split(' ');
 
-  if (bearer !== 'Bearer') {
-    return res.status(401).json({ message: 'Unauthorized' });
-  }
-
   try {
+    if (bearer !== 'Bearer' || !token) {
+      console.log('hello');
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+
     const { id } = jwt.verify(token, SECRET_KEY);
     const user = await User.findById(id);
 
