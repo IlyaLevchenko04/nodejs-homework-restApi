@@ -1,31 +1,31 @@
-## GoIT Node.js Course Template Homework
+Contacts API
 
-Виконайте форк цього репозиторію для виконання домашніх завдань (2-6)
-Форк створить репозиторій на вашому http://github.com
+api/contacts :
 
-Додайте ментора до колаборації
+GET api/contacts (All contacts)
 
-Для кожної домашньої роботи створюйте свою гілку.
+GET api/contacts/:id (find contact by id)
 
-- hw02
-- hw03
-- hw04
-- hw05
-- hw06
+POST api/contacts (create new contact by contact schema ./schemas/joiSchema)
 
-Кожна нова гілка для др повинна робитися з master
+DELETE api/contacts/:id (delete contact by id)
 
-Після того, як ви закінчили виконувати домашнє завдання у своїй гілці, необхідно зробити пулл-реквест (PR). Потім додати ментора для рев'ю коду. Тільки після того, як ментор заапрувить PR, ви можете виконати мердж гілки з домашнім завданням у майстер.
+PUT api/contacts/:id (update contact)
 
-Уважно читайте коментарі ментора. Виправте зауваження та зробіть коміт у гілці з домашнім завданням. Зміни підтягнуться у PR автоматично після того, як ви відправите коміт з виправленнями на github
-Після виправлення знову додайте ментора на рев'ю коду.
+PATCH api/contacts/:id/favorite (update favorite status)
 
-- При здачі домашньої роботи є посилання на PR
-- JS-код чистий та зрозумілий, для форматування використовується Prettier
+api/users :
 
-### Команди:
+POST api/users/register (register new user by user schema ./schemas/User)
 
-- `npm start` &mdash; старт сервера в режимі production
-- `npm run start:dev` &mdash; старт сервера в режимі розробки (development)
-- `npm run lint` &mdash; запустити виконання перевірки коду з eslint, необхідно виконувати перед кожним PR та виправляти всі помилки лінтера
-- `npm lint:fix` &mdash; та ж перевірка лінтера, але з автоматичними виправленнями простих помилок
+GET api/users/verify/:verificationCode (verify email)
+
+POST api/users/verify (resend verify email)
+
+POST api/users/login (login)
+
+POST api/users/logout (logout)
+
+GET api/users/current (get current user)
+
+PATCH api/users/avatars (update user avatar)

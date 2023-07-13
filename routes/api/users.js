@@ -8,11 +8,15 @@ const {
   logoutUser,
   currentUser,
   uploadAvatar,
+  verify,
+  resendVerifyEmail,
 } = require('../../controllers/usersCntrls');
 
 const jsonParser = express.json();
 
 router.post('/register', jsonParser, registerUser);
+router.get('/verify/:verificationCode', verify);
+router.post('/verify', resendVerifyEmail);
 router.post('/login', jsonParser, loginUser);
 router.post('/logout', auth, jsonParser, logoutUser);
 router.get('/current', auth, jsonParser, currentUser);
